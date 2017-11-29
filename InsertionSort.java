@@ -1,4 +1,9 @@
+/*
 
+  InsertionSort.java.
+  Author: Eli Pandolfo
+  Sorts an array of ints with insertion sort. Run time O(n^2).
+*/
 
 public class InsertionSort
 {

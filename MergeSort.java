@@ -1,3 +1,10 @@
+/*
+  MergeSort.java
+  Author: Eli Pandolfo
+
+  Sorts an array of ints with merge sort. Run time O(nlogn). (log base 2).
+*/
+
 import java.util.Arrays;
 
 public class MergeSort

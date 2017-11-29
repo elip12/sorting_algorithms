@@ -1,4 +1,3 @@
 # sorting_algorithms
 
-The idea behind tablesort is basically a has table without the hash;
-after starting to write it, I realize why it is not used
+The most common sorting algorithms (except bubblesort), implemented in Java. These are simple implementations that all sort arrays of ints, but can easily be modified to sort arrays of objects.
