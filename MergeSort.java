@@ -2,7 +2,7 @@
   MergeSort.java
   Author: Eli Pandolfo
 
-  Sorts an array of ints with merge sort. Run time O(nlogn). (log base 2).
+  Sorts an array of ints with merge sort. Run time O(nlogn).
 */
 
 import java.util.Arrays;
