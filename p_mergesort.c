@@ -17,16 +17,15 @@
     void pointers to threads, so a lot of casting is inevitable.
 
     TODO:   generalize to any data type
-            read in array from file
-            automatically calculate NUM_THREADS
             speed up final merging with heap
 */
 
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
-#define NUM_THREADS 4
-#define ARRAY_SIZE 1000000
+#include <math.h>
+#define ARRAY_SIZE 10000000
+#define NUM_THREADS ((int)(round(sqrt(log(ARRAY_SIZE) / log(2)))))
 #define EXTRASTACK 1000000 // ~1 MB
 
 /*  structure for an array with a size
@@ -141,7 +140,7 @@ void *start(void *A)
 /*
     stacksize: the size of the stack given to each created thread.
     thread: array thread IDs (which are really just addresses in an array)
-    A: the static input array
+    A: the input array
     attr: pthread attribute that defines thread properties
     rc: return value for thread creation and joining
     thread_ret: the pointer to an array struct returned by each thread
@@ -161,7 +160,7 @@ int main()
 {
     size_t stacksize;
     pthread_t thread[NUM_THREADS];
-    int A[ARRAY_SIZE];
+    array *A;
     array *thread_A;
     pthread_attr_t attr;
     int rc;
@@ -172,13 +171,17 @@ int main()
     array *temp;
     array *output;
 
+    printf("NUM_THREADS: %d\n", NUM_THREADS);
 
     // initialize random number generator and array
     srand((unsigned) time(&seed));
+    A = (array *)malloc(sizeof(array));
+    A->size = ARRAY_SIZE;
+    A->data = malloc(sizeof(int) * ARRAY_SIZE);
     for(a = 0; a < ARRAY_SIZE; a++)
     {
         //A[a] = ARRAY_SIZE - a;
-        A[a] = rand();
+        ((int *)A->data)[a] = rand();
     }
     
     // initialize threads and set joinable
@@ -200,12 +203,12 @@ int main()
         // instantiate array struct to pass to thread
         thread_A = malloc(sizeof(array));
         thread_A->size = size;
-        thread_A->data = malloc(sizeof(int) * (size));
+        thread_A->data = malloc(sizeof(int) * size);
         
         // copy desired partition of input array into thread array
         for(a = 0; a < size; a++)
         {
-            ((int *)(thread_A->data))[a] = A[t * (ARRAY_SIZE / NUM_THREADS) + a];
+            ((int *)(thread_A->data))[a] = ((int *)A->data)[t * (ARRAY_SIZE / NUM_THREADS) + a];
         }
         
         // create thread
@@ -220,6 +223,11 @@ int main()
         // thread_A does not need to be freed here because it is the pointer that is returned
         // by the threads, so it gets freed after merging.
     }
+
+    // free input array
+    free(A->data);
+    free(A);
+    A = NULL;
 
     // free attribute, wait for threads to complete, then join them to main and create output
     pthread_attr_destroy(&attr);
@@ -283,7 +291,7 @@ int main()
         }
     }
 
-    printf("Output:\n");
+    //printf("Output:\n");
     //print_array(output->data, output->size);
 
     // free remaining allocated memory
