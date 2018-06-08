@@ -4,8 +4,9 @@
 
     Parallel mergesort using pthreads.
 
-    Algorithm runs in O(nlog(n) / x + nx), where n is the size of input 
-    and x is the number of threads used.
+    Algorithm runs in O(n/x * log(n/x) + nx), where n is the size of input 
+    and x is the number of threads used. Since usually n >> x, so this approximates
+    O(n/x * log(n) + nx).
     
     By calculation and testing: most efficient parameters: x = root(log(n))
 
